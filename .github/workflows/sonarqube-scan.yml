@@ -13,28 +13,31 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      
-      # --- NEW STEPS START HERE ---
+
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest coverage
 
-      - name: Test with pytest and generate coverage report
-        run: pytest --cov=app --cov-report=xml
-      # --- NEW STEPS END HERE ---
+      - name: Run tests and generate coverage
+        run: |
+          coverage run -m pytest
+          coverage xml -o coverage.xml
+          ls -lh coverage.xml  # confirm file exists
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-            # --- ADD THIS BLOCK ---
         with:
           args: >
+            -Dsonar.projectKey=Vulnerable-Python-App
+            -Dsonar.sources=.
             -Dsonar.python.coverage.reportPaths=coverage.xml
-  # --------------------
-    
