@@ -1,0 +1,7 @@
+venv/
+
+# Python cache
+__pycache__/
+
+# Test coverage reports
+.coverage
