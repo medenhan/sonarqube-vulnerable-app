@@ -14,6 +14,10 @@ app.config['SECRET_KEY'] = os.urandom(24)
 csrf = CSRFProtect(app)
 # -----------
 
+@app.route('/ping')
+def ping():
+    return 'pong'
+
 # Define a route for the root URL ('/')
 @app.route('/')
 def hello_world():
