@@ -1,4 +1,4 @@
-name: Build
+name: Build and SonarQube Analysis
 
 on:
   push:
@@ -7,14 +7,15 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build and Analyze
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code with full history
+        uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-      
-      # --- NEW STEPS START HERE ---
+          # This line is the critical fix. It fetches the full git history.
+          fetch-depth: 0  
+
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -25,10 +26,12 @@ jobs:
 
       - name: Test with pytest and generate coverage report
         run: pytest --cov=app --cov-report=xml
-      # --- NEW STEPS END HERE ---
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.python.coverage.reportPaths=coverage.xml
