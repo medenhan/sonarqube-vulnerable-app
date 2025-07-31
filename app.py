@@ -22,9 +22,9 @@ def ping():
 @app.route('/')
 def hello_world():
     # This is a hardcoded secret - SonarQube should find this!
-    db_password = "mySuperSecretPassword123"
+    password = "mySuperSecretPassword123"
     
-    print(f"A user connected! The secret password is {db_password}")
+    print(f"A user connected! The secret password is {password}")
     
     return '<h1>Hello, World! This is our test application.</h1>'
 
